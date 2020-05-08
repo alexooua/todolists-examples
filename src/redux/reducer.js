@@ -1,100 +1,48 @@
-export const ADD_TO_DO_LIST='todolist/reducer/ADD-TO-DO-LIST'
-export const ADD_TASK='todolist/reducer/ADD-TASK'
-export const CHANGE_TASK='todolist/reducer/CHANGE-TASK'
-export const DELETE_TO_DO_LIST='todolist/reducer/DELETE-TO-DO-LIST'
-export const DELETE_TASK='todolist/reducer/DELETE_TASK'
+export const CHANGE_IS_DONE_TASK = 'todolist-example/reducer/CHANGE_IS_DONE_TASK'
+export const CHANGE_TITLE = 'todolist-example/reducer/CHANGE_TITLE'
+export const ADD_TASK = 'todolist-example/reducer/ADD_TASK'
+export const DELETE_TASK = 'todolist-example/reducer/DELETE_TASK'
 
 const initialState = {
-    toDoLists: [
-    ]
+    tasks: [
+        {id: 1, title: "one", isDone: true}
+    ],
+    text: ''
 }
 export const reducer = (state = initialState, action) => {
-
-    let newToDoLists
+    let tasks
     switch (action.type) {
 
+        case "CHANGE_IS_DONE_TASK":
+            tasks = [...state.tasks.map(ts => {
+                if (ts.id === action.idTask) {
+                    return {...ts, isDone: !ts.isDone}
+                }else {
+                    return ts
+                }
+
+            })]
+            return {...state, tasks: tasks}
+        case "CHANGE_TITLE":
+            return {...state, text: action.text}
         case "ADD_TASK":
-            newToDoLists=state.toDoLists.map(todo=>{
-                if (todo.id !==action.toDoListId){
-                    return todo
-                }else {
-                    return {...todo,tasks: [...todo.tasks,action.newTask]}
-                }
-            });
-            return {...state,toDoLists: newToDoLists}
-        case "CHANGE_TASK":
-            newToDoLists=state.toDoLists.map(todo=>{
-                if (todo.id !==action.toDoListId){
-                    return todo
-                }else {
-                    return {...todo,tasks: [...todo.tasks.map(task=>{
-                            if (task.id !==action.taskId){
-                                return task
-                            }else {
-                                return {...task,...action.obj}
-                            }
-                        })]}
-                }
-            });
-            return {...state,toDoLists: newToDoLists}
-        case "DELETE_TO_DO_LIST":
-            return {...state,toDoLists: state.toDoLists.filter(toDoList=>{
-                    return toDoList.id !== action.toDoListId
-                })}
-        case "DELETE_TASK":
-            return {...state,
-                toDoLists:state.toDoLists.map(todo=>{
-                    if (todo.id !==action.toDoListId){
-                        return todo
-                    }else {
-                        return {...todo,tasks: todo.tasks.filter(task=>{
-                                return  task.id!==action.taskId
-                            })}
-                    }})
+            tasks = {
+                id: Math.floor(Math.random() * (1000 - 2) + 2) ,
+                title: state.text,
+                isDone: true
             }
+            return {tasks: [...state.tasks, tasks], text: ''}
+        case "DELETE_TASK":
+            tasks = [...state.tasks.filter(ts => {
+                    return ts.id !== action.idTask
+            })]
+            return {...state, tasks: tasks}
+        default:
+            return state;
     }
-    return state;
 }
 
-export const addToDoListAC=(newToDoList)=>{
-    return{
-        type:"ADD_TO_DO_LIST",
-        newToDoList:newToDoList
-    }
-}
-export const addTaskAC=(toDoListId, newTask)=>{
-    return{
-        type: "ADD_TASK",
-        newTask,
-        toDoListId
-    }
-}
-export const changeTaskAC=(toDoListId, taskId, obj)=>{
-    return{
-        type: "CHANGE_TASK",
-        toDoListId: toDoListId,
-        taskId: taskId,
-        obj: obj
-    }
-}
-export const deleteToDoListAC=(toDoListId)=>{
-    return{
-        type: "DELETE_TO_DO_LIST",
-        toDoListId: toDoListId,
-    }
-}
-export const deleteTaskAC=(toDoListId, taskId)=>{
-    return{
-        type: "DELETE_TASK",
-        toDoListId: toDoListId,
-        taskId: taskId
-    }
-}
-// export const setStateFromLocalStorageAC=()=>{
-// let dd=localStorage.getItem('asdf')
-//     let  stateFromLS=JSON.parse()
-//     return{
-//         type:"SET-STATE-FROM-LOCALSTORAGE",
-//         stateFromLS:stateFromLS
-//     }
-// }
+export const changeIsDone = (idTask) => ({type: "CHANGE_IS_DONE_TASK", idTask: idTask})
+export const changeTitle = (text) => ({type: "CHANGE_TITLE", text: text})
+export const addTask = () => ({type: "ADD_TASK",})
+export const deleteTask = (idDelTask) => ({type: "DELETE_TASK",idTask: idDelTask})
